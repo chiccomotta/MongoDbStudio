@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using MongoDbStudio.Interfaces;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDbStudio.Interfaces;
 using MongoDbStudio.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MongoDbStudio.Controllers
 {
@@ -55,7 +54,8 @@ namespace MongoDbStudio.Controllers
             var update = Builders<User>
                 .Update
                 .Set(s => s.Name, "Randazzo")
-                .Set(u => u.Email, "randazzo@hotmail.it");
+                .Set(u => u.Email, "randazzo@hotmail.it")
+                .Push(u => u.Hobbies, "new value" + DateTime.Now.Second);
 
             var result = await users.UpdateOneAsync(filter, update);
 
