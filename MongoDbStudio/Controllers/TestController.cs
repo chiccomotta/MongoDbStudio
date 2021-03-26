@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MongoDbStudio.Interfaces;
 using System.Threading.Tasks;
@@ -28,8 +29,9 @@ namespace MongoDbStudio.Controllers
             var person = new User
             {
                 Id = ObjectId.GenerateNewId(),
-                Name = "Cristiano",
-                Email = "cristiano.motta@hotmail.it"
+                Name = "Gianni Motta",
+                Email = "gianni.motta@hotmail.it",
+                Hobbies = new List<string>(){"Calcio", "Pianoforte", "Pasticceria", "Viaggi"}
             };
 
             var db = MongoDbDbClient.GetDatabase("MongoDbStudio");
@@ -37,6 +39,27 @@ namespace MongoDbStudio.Controllers
             await users.InsertOneAsync(person);
 
             return await Task.FromResult(Ok(person));
+        }
+
+        [Route("UpdateMongoUser")]
+        [HttpGet]
+        public async Task<OkObjectResult> UpdateMongoUser()
+        {
+            var db = MongoDbDbClient.GetDatabase("MongoDbStudio");
+            var users = db.GetCollection<User>("Users");
+
+            // Filter
+            var filter = Builders<User>.Filter.Eq(u => u.Id, ObjectId.Parse("605da17e3a0e620b39d8169c"));
+            
+            // Update
+            var update = Builders<User>
+                .Update
+                .Set(s => s.Name, "Randazzo")
+                .Set(u => u.Email, "randazzo@hotmail.it");
+
+            var result = await users.UpdateOneAsync(filter, update);
+
+            return await Task.FromResult(Ok(result));
         }
 
         [Route("GetUsers")]
