@@ -21,7 +21,7 @@ namespace MongoDbStudio.Controllers
             MongoDbDbClient = mongoDbClient;
         }
 
-        [Route("CreateMongoUser")]
+        [Route("create")]
         [HttpGet]
         public async Task<OkObjectResult> CreateMongoUser()
         {
@@ -40,7 +40,7 @@ namespace MongoDbStudio.Controllers
             return await Task.FromResult(Ok(person));
         }
 
-        [Route("UpdateMongoUser")]
+        [Route("update")]
         [HttpGet]
         public async Task<OkObjectResult> UpdateMongoUser()
         {
@@ -62,7 +62,7 @@ namespace MongoDbStudio.Controllers
             return await Task.FromResult(Ok(result));
         }
 
-        [Route("GetUsers")]
+        [Route("get")]
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
