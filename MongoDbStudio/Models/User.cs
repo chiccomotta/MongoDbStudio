@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace MongoDbStudio.Models
 {
+    [BsonIgnoreExtraElements]
     public class User
     {
-        public ObjectId Id { get; set; }
+        [BsonId]
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        [BsonElement("address")]
+        public string FullAddress { get; set; }
         public List<string> Hobbies { get; set; }
     }
 }

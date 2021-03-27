@@ -6,6 +6,8 @@ using MongoDbStudio.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using MongoDbStudio.Infrastructure.Extensions;
 
 namespace MongoDbStudio.Controllers
 {
@@ -25,18 +27,18 @@ namespace MongoDbStudio.Controllers
         [HttpGet]
         public async Task<OkObjectResult> CreateMongoUser()
         {
+            var db = MongoDbDbClient.GetDatabase("MongoDbStudio");
+            var users = db.GetCollection<User>("Users");
+            
             var person = new User
             {
-                Id = ObjectId.GenerateNewId(),
-                Name = "Gianni Motta",
-                Email = "gianni.motta@hotmail.it",
+                Id = db.GetNextSequenceValue("UserSequence").Result.Value,
+                Name = "Mauro",
+                Email = "mauro.motta@hotmail.it",
                 Hobbies = new List<string>(){"Calcio", "Pianoforte", "Pasticceria", "Viaggi"}
             };
 
-            var db = MongoDbDbClient.GetDatabase("MongoDbStudio");
-            var users = db.GetCollection<User>("Users");
             await users.InsertOneAsync(person);
-
             return await Task.FromResult(Ok(person));
         }
 
@@ -48,7 +50,7 @@ namespace MongoDbStudio.Controllers
             var users = db.GetCollection<User>("Users");
 
             // Filter
-            var filter = Builders<User>.Filter.Eq(u => u.Id, ObjectId.Parse("605da17e3a0e620b39d8169c"));
+            var filter = Builders<User>.Filter.Eq(u => u.Name, "Chicco");
             
             // Update
             var update = Builders<User>
@@ -66,11 +68,10 @@ namespace MongoDbStudio.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var filter = new BsonDocument();
             var db = MongoDbDbClient.GetDatabase("MongoDbStudio");
 
             var users = db.GetCollection<User>("Users");
-            var query = await users.FindAsync(filter);
+            var query = users.Find(u => u.Name == "Chicco");
 
             return Ok(await query.ToListAsync());
         }
